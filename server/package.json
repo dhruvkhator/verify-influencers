@@ -1,0 +1,27 @@
+{
+  "name": "verifyinfluencers",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apify-client": "^2.11.1",
+    "axios": "^1.7.9",
+    "bullmq": "^5.38.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "faiss-node": "^0.5.1",
+    "mongoose": "^8.9.5",
+    "nodemon": "^3.1.9",
+    "openai": "^4.80.1",
+    "socket.io": "^4.8.1"
+  }
+}
