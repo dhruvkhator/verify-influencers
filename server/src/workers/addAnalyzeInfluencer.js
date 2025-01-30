@@ -20,6 +20,8 @@ const apify_api = process.env.APIFY_API;
 const redisConnection = {
     host: process.env.REDIS_HOST || "localhost",
     port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : undefined, // Convert to number
+    username: "default",
+    password: process.env.REDIS_PASSWORD
 };
 
 const influencerQueue = new Queue('influencerQueue', {
