@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Users, Award, CheckCircle, DollarSign, ExternalLink } from 'lucide-react';
-import { fetchInfluencerByHandle } from '../store/slices/influencersSlice';
+import { fetchInfluencerByHandle, resetAnalyzing } from '../store/slices/influencersSlice';
 import { RootState } from '../store';
 import { SERVER_HOST } from '../utils/constants';
 
@@ -17,10 +17,8 @@ const Profile: React.FC = () => {
   //username is same as handle
 
   const { username } = useParams<{ username: string }>();
-  const { analyzing, jobId, loading, profile, error } = useSelector((state: RootState) => state.influencers);
+  const { analyzing, jobId, loading, profile } = useSelector((state: RootState) => state.influencers);
 
-  const [profileAnalyzing, setProfileAnalyzing] = useState(analyzing);
-  const [profileError, setProfileError] = useState(error);
 
   //console.log(profile?.verifiedClaims[0].verification[0].reason)
 
@@ -30,7 +28,7 @@ const Profile: React.FC = () => {
   //console.log(profileAnalyzing, analyzing)
 
   useEffect(() => {
-    if (profileAnalyzing) {
+    if (analyzing) {
       // Listen for WebSocket event 'analysisComplete' only when analyzing is true
       //@ts-ignore
       socket.current = io(SERVER_HOST);
@@ -38,18 +36,16 @@ const Profile: React.FC = () => {
       //@ts-ignore
       socket.current.on("analysisComplete", (data: { jobId: string | null; }) => {
         console.log("🔥 Analysis Complete Event Received:", data);
-          setProfileAnalyzing(false);
+          dispatch(resetAnalyzing())
         
       });
 
       //@ts-ignore
       socket.current.on("analysisFailed", (data: any) => {
         console.log("Analysis Failed: ", data);
-        console.log(jobId);
 
         //@ts-ignore
-        setProfileError(data.error);
-        setProfileAnalyzing(false);
+        dispatch(resetAnalyzing())
         alert(data.error)
 
       });
@@ -61,19 +57,19 @@ const Profile: React.FC = () => {
         socket.current.off("analysisFailed")
       };
     }
-  }, [dispatch, jobId, profileAnalyzing, socket]);
+  }, [dispatch, jobId, analyzing, socket]);
 
   //console.log(profileAnalyzing, username, profile, loading)
 
   useEffect(() => {
-    if (!profileAnalyzing) {
+    if (!analyzing) {
       //@ts-ignore
       dispatch(fetchInfluencerByHandle(username));
     }
-  }, [dispatch, username, profileAnalyzing])
+  }, [dispatch, username, analyzing])
 
 
-  if (profileAnalyzing) {
+  if (analyzing) {
     return (
       <div className="p-6 text-center text-gray-400">
         <div className="flex justify-center items-center">
@@ -96,7 +92,7 @@ const Profile: React.FC = () => {
     );
   }
 
-  if (!loading && !profileAnalyzing && !profile) {
+  if (!loading && !analyzing && !profile) {
     return (
       <div className="p-6 text-center text-gray-400">
         <div className="flex justify-center items-center text-lg font-medium">
