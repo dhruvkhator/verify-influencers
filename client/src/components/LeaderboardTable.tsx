@@ -51,6 +51,8 @@ const LeaderboardTable: React.FC = () => {
           </thead>
           <tbody>
             {influencers.map((influencer, index) => (
+              influencer?.trust_score && (
+
               <tr
                 key={influencer._id}
                 className="border-b border-gray-800 cursor-pointer hover:bg-gray-900"
@@ -72,6 +74,7 @@ const LeaderboardTable: React.FC = () => {
                 </td>
                 <td className="hidden md:table-cell px-6 py-4 text-gray-300">{influencer.followers > 1000 ? `${(influencer.followers/1000).toPrecision(4)}k` : influencer.followers }</td>
               </tr>
+              )
             ))}
           </tbody>
         </table>
