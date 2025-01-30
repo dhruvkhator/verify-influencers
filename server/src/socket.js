@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const origin = process.env.ORIGIN1;
+const origin = process.env.ORIGIN2;
 
 let io;
 console.log(origin);
