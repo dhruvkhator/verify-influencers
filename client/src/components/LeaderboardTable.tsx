@@ -68,7 +68,7 @@ const LeaderboardTable: React.FC = () => {
                   </div>
                 </td>
                 <td className="px-4 sm:px-6 py-4">
-                  <span className="text-emerald-500">{influencer.trust_score.toPrecision(2)}%</span>
+                  <span className="text-emerald-500">{influencer?.trust_score?.toPrecision(2)}%</span>
                 </td>
                 <td className="hidden md:table-cell px-6 py-4 text-gray-300">{influencer.followers > 1000 ? `${(influencer.followers/1000).toPrecision(4)}k` : influencer.followers }</td>
               </tr>
