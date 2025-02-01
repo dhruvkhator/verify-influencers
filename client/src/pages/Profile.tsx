@@ -146,7 +146,9 @@ const Profile: React.FC = () => {
               <Users className="text-blue-500" size={20} />
             </div>
             <div className="text-xl sm:text-2xl font-bold text-white">
-              500K
+            {
+              //@ts-ignore
+              profile?.followers > 1000 ? `${(profile?.followers/1000).toPrecision(4)}k` : profile?.followers}
             </div>
           </div>
 

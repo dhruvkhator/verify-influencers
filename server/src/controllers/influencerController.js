@@ -1,13 +1,10 @@
 import dotenv from 'dotenv';
-import axios from 'axios';
+
 
 import Influencer from '../models/Influencer.js'
-import { AxiosError } from 'axios';
+
 import Claim from '../models/Claim.js';
-import Verification from '../models/Verification.js';
-import { claimVerification } from '../utils/verifyClaims.js';
-import { sanitizeText } from '../utils/cleaner.js';
-import { extractClaims } from '../utils/extractClaims.js';
+
 import influencerQueue from '../workers/addAnalyzeInfluencer.js';
 import verifyClaimsQueue from '../workers/verifyInfluencerClaims.js';
 import { emitEvent } from '../socket.js';

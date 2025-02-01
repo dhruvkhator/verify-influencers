@@ -11,6 +11,7 @@ interface Influencer {
   _id: string;
   screen_name: string;
   handle: string;
+  followers: number;
   // Add other properties as needed
 }
 

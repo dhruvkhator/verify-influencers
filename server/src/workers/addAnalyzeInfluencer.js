@@ -15,6 +15,7 @@ import { emitEvent } from "../socket.js";
 dotenv.config();
 
 const apify_api = process.env.APIFY_API;
+const apify_api_profile = process.env.APIFY_API_PROFILE;
 
 
 const redisConnection = {
@@ -27,6 +28,35 @@ const redisConnection = {
 const influencerQueue = new Queue('influencerQueue', {
     connection: redisConnection
 });
+
+async function fetchProfile(x_handle) {
+    try {
+        const response = await axios.post(
+            apify_api_profile,
+            {
+                "handles": [
+                    x_handle
+                ],
+                "profilesDesired": 1,
+                "proxyConfig": {
+                    "useApifyProxy": true,
+                    "apifyProxyGroups": [
+                        "RESIDENTIAL"
+                    ]
+                }
+            },
+            { params: { fields: "avatar,userFullName,description,verified,totalFollowers" } }
+        )
+
+        const profile = response.data;
+        if(profile.length <=0) throw new Error("Failed to fetch profile");
+
+        return profile;
+    } catch (error) {
+        console.error("Error while fetching profile:", error);
+        throw new Error("Failed to fetch profile");
+    }
+}
 
 async function fetchTweets(x_handle, influencerId) {
     try {
@@ -78,7 +108,7 @@ async function extractAndDeduplicateClaims(tweets) {
         }
     }
     console.log(allClaims.length)
-    if(allClaims.length > 0){
+    if (allClaims.length > 0) {
         unqiueClaims = await deduplicateClaims(allClaims);
     }
     return unqiueClaims;
@@ -143,7 +173,17 @@ const influencerWorker = new Worker('influencerQueue', async (job) => {
 
         const { x_handle, apiKey, count } = job.data;
 
-        const addedInfluencer = await Influencer.create({ handle: x_handle });
+        const influencerProfile = await fetchProfile(x_handle);
+
+        const addedInfluencer = await Influencer.create({
+            handle:x_handle,
+            screen_name: influencerProfile[0].userFullName,
+            bio: influencerProfile[0].description,
+            avatar: influencerProfile[0].avatar,
+            followers: influencerProfile[0].totalFollowers,
+            blue_verified: influencerProfile[0].verified
+        })
+
 
         const tweets = await fetchTweets(x_handle, addedInfluencer._id);
         if (!tweets || tweets.length === 0) {
